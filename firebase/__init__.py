@@ -109,10 +109,12 @@ class Firebase():
 _GlobalCache = {}
 
 class CachedFirebase(Firebase):
+    ROOT_URL = '' #no trailing slash
+    auth_token = None
 
     def __init__(self, root_url, auth_token=None):
-        ROOT_URL = '' #no trailing slash
-        auth_token = None
+        self.ROOT_URL = root_url.rstrip('/')
+        self.auth_token = auth_token
 
     #These methods are intended to mimic Firebase API calls.
 
