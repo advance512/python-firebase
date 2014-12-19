@@ -179,3 +179,27 @@ class CachedFirebase(Firebase):
         global _GlobalCache
         _GlobalCache[self.ROOT_URL] = None
         return self.__request('delete')
+
+    #Private
+
+    def __request(self, method, **kwargs):
+        #Firebase API does not accept form-encoded PUT/POST data. It needs to
+        #be JSON encoded.
+        if 'data' in kwargs:
+            kwargs['data'] = json.dumps(kwargs['data'], cls=JSONEncoder)
+
+        params = {}
+        if self.auth_token:
+            if 'params' in kwargs:
+                params = kwargs['params']
+                del kwargs['params']
+            params.update({'auth': self.auth_token})
+
+        r = requests.request(method, self.__url(), params=params, **kwargs)
+        r.raise_for_status() #throw exception if error
+        return r.json()
+
+
+    def __url(self):
+        #We append .json to end of ROOT_URL for REST API.
+        return '%s.json' % self.ROOT_URL
