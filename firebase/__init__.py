@@ -109,10 +109,10 @@ class Firebase():
 _GlobalCache = {}
 
 class CachedFirebase(Firebase):
-    _firebase = None
 
     def __init__(self, root_url, auth_token=None):
-        self._firebase = Firebase(root_url, auth_token)
+        ROOT_URL = '' #no trailing slash
+        auth_token = None
 
     #These methods are intended to mimic Firebase API calls.
 
@@ -128,6 +128,26 @@ class CachedFirebase(Firebase):
         if up.path == '':
             return None #maybe throw exception here?
         return CachedFirebase(url, auth_token=self.auth_token)
+
+    def name(self):
+        return os.path.basename(self.ROOT_URL)
+
+    def toString(self):
+        return self.__str__()
+    def __str__(self):
+        return self.ROOT_URL
+
+    def set(self, value):
+        return self.put(value)
+
+    def push(self, data):
+        return self.post(data)
+
+    def update(self, data):
+        return self.patch(data)
+
+    def remove(self):
+        return self.delete()
 
     #These mirror REST API functionality
 
